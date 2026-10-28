@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Matematika Futuristik - Kelas 2 SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .font-game {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* 3D Clay Effect Classes */
+        .clay-card {
+            background: #ffffff;
+            border-radius: 28px;
+            box-shadow: 
+                0 20px 30px -10px rgba(0, 0, 0, 0.3),
+                inset 0 -8px 0 rgba(0, 0, 0, 0.1),
+                inset 0 4px 10px rgba(255, 255, 255, 0.9);
+            border: 4px solid #e0e7ff;
+        }
+
+        .clay-btn-cyan {
+            background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 0 #0e7490,
+                0 15px 20px rgba(6, 182, 212, 0.4),
+                inset 0 4px 6px rgba(255, 255, 255, 0.4);
+            transition: all 0.1s ease;
+        }
+        .clay-btn-cyan:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .clay-btn-cyan:active { transform: translateY(6px); box-shadow: 0 2px 0 #0e7490; }
+
+        .clay-btn-pink {
+            background: linear-gradient(180deg, #ec4899 0%, #db2777 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 0 #be185d,
+                0 15px 20px rgba(236, 72, 153, 0.4),
+                inset 0 4px 6px rgba(255, 255, 255, 0.4);
+            transition: all 0.1s ease;
+        }
+        .clay-btn-pink:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .clay-btn-pink:active { transform: translateY(6px); box-shadow: 0 2px 0 #be185d; }
+
+        .clay-btn-amber {
+            background: linear-gradient(180deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-radius: 20px;
+            box-shadow: 
+                0 8px 0 #b45309,
+                0 15px 20px rgba(245, 158, 11, 0.4),
+                inset 0 4px 6px rgba(255, 255, 255, 0.4);
+            transition: all 0.1s ease;
+        }
+        .clay-btn-amber:hover { transform: translateY(-2px); filter: brightness(1.05); }
+        .clay-btn-amber:active { transform: translateY(6px); box-shadow: 0 2px 0 #b45309; }
+
+        .clay-option {
+            background: #f8fafc;
+            border: 4px solid #cbd5e1;
+            border-radius: 20px;
+            box-shadow: 0 6px 0 #94a3b8;
+            transition: all 0.15s ease;
+            cursor: pointer;
+        }
+        .clay-option:hover {
+            background: #e0f2fe;
+            border-color: #38bdf8;
+            box-shadow: 0 6px 0 #0284c7;
+            transform: translateY(-2px);
+        }
+        .clay-option.selected {
+            background: #cfe8ff;
+            border-color: #2563eb;
+            box-shadow: 0 6px 0 #1d4ed8;
+        }
+
+        /* 3D Clay Character Bobbing Animation */
+        @keyframes clayBob {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+        .clay-char {
+            animation: clayBob 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 15px 10px rgba(0,0,0,0.3));
+        }
+
+        /* Certificate Styling */
+        .cert-border {
+            border: 12px double #4f46e5;
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+        }
+
+        /* Custom Modal Alert */
+        .custom-alert {
+            animation: fadeIn 0.2s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-3 md:p-6">
+
+    <!-- Container Utama Game -->
+    <div class="w-full max-w-4xl relative">
+
+        <!-- ================= HALAMAN 1: REGISTRASI SISWA ================= -->
+        <div id="screen-welcome" class="clay-card p-6 md:p-10 text-center relative overflow-hidden">
+            <!-- Futuristik Glow Deco -->
+            <div class="absolute -top-12 -left-12 w-40 h-40 bg-cyan-400 rounded-full blur-3xl opacity-30"></div>
+            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-pink-500 rounded-full blur-3xl opacity-30"></div>
+
+            <div class="flex justify-center mb-4">
+                <!-- Mascot 3D Clay Vector Avatar (Robot Kucing Futuristik Clay) -->
+                <svg class="w-32 h-32 md:w-40 md:h-40 clay-char" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="100" cy="100" r="80" fill="#06B6D4" stroke="#0891B2" stroke-width="8"/>
+                    <ellipse cx="100" cy="110" rx="55" ry="45" fill="#E0F2FE"/>
+                    <!-- Telinga Clay -->
+                    <path d="M40 50 L70 20 L80 60 Z" fill="#EC4899" stroke="#BE185D" stroke-width="6" stroke-linejoin="round"/>
+                    <path d="M160 50 L130 20 L120 60 Z" fill="#EC4899" stroke="#BE185D" stroke-width="6" stroke-linejoin="round"/>
+                    <!-- Mata Clay 3D -->
+                    <circle cx="70" cy="90" r="14" fill="#1E293B"/>
+                    <circle cx="130" cy="90" r="14" fill="#1E293B"/>
+                    <circle cx="74" cy="86" r="5" fill="white"/>
+                    <circle cx="134" cy="86" r="5" fill="white"/>
+                    <!-- Hidung & Mulut -->
+                    <polygon points="100,102 92,112 108,112" fill="#F59E0B"/>
+                    <path d="M85 120 Q100 135 115 120" stroke="#1E293B" stroke-width="5" stroke-linecap="round" fill="none"/>
+                    <!-- Antena Futuristik -->
+                    <rect x="94" y="5" width="12" height="25" rx="6" fill="#F59E0B"/>
+                    <circle cx="100" cy="5" r="10" fill="#EF4444"/>
+                </svg>
+            </div>
+
+            <h1 class="text-3xl md:text-5xl font-game text-indigo-900 mb-2 tracking-wide">
+                MATH-BOT 3000
+            </h1>
+            <p class="text-indigo-600 font-bold mb-6 text-sm md:text-base">
+                🚀 Petualangan Matematika HOTS Futuristik - Kelas 2 SD 🌟
+            </p>
+
+            <!-- Form Identitas Siswa -->
+            <div class="max-w-md mx-auto space-y-4 bg-indigo-50 p-6 rounded-2xl border-2 border-indigo-100 mb-6">
+                <div class="text-left">
+                    <label class="block text-indigo-900 font-bold mb-1 ml-1 text-sm"><i class="fa-solid fa-user-astronaut mr-2 text-cyan-500"></i>Nama Lengkap Siswa:</label>
+                    <input type="text" id="player-name" placeholder="Ketik nama kamu di sini..." class="w-full px-4 py-3 rounded-xl border-3 border-indigo-200 focus:border-cyan-500 focus:outline-none font-bold text-gray-800 shadow-inner">
+                </div>
+                <div class="text-left">
+                    <label class="block text-indigo-900 font-bold mb-1 ml-1 text-sm"><i class="fa-solid fa-school mr-2 text-pink-500"></i>Kelas:</label>
+                    <select id="player-class" class="w-full px-4 py-3 rounded-xl border-3 border-indigo-200 focus:border-cyan-500 focus:outline-none font-bold text-gray-800 shadow-inner bg-white">
+                        <option value="2-A">2 - A (Petualang Hebat)</option>
+                        <option value="2-B">2 - B (Penjelajah Ruang Angkasa)</option>
+                        <option value="2-C">2 - C (Cendekia Cilik)</option>
+                        <option value="2-D">2 - D (Detektif Angka)</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="clay-btn-pink w-full max-w-md py-4 text-xl font-game tracking-wider uppercase flex items-center justify-center gap-3 mx-auto">
+                <i class="fa-solid fa-rocket text-2xl"></i> Mulai Misi!
+            </button>
+        </div>
+
+
+        <!-- ================= HALAMAN 2: MAIN GAME DASHBOARD ================= -->
+        <div id="screen-game" class="hidden clay-card p-4 md:p-8">
+            
+            <!-- Header Game Info (Level, Timer, Identitas) -->
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-6 border-b-2 border-indigo-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500 text-white flex items-center justify-center font-game text-xl shadow-md">
+                        <span id="display-level-num">1</span>
+                    </div>
+                    <div>
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider">Tingkat Misi</div>
+                        <div id="display-level-title" class="font-game text-indigo-900 text-base md:text-lg">Pola Angka Galaksi</div>
+                    </div>
+                </div>
+
+                <!-- Info Siswa Chat Bubble -->
+                <div class="hidden sm:flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full border border-indigo-200">
+                    <i class="fa-solid fa-user-circle text-indigo-500"></i>
+                    <span id="hud-player-info" class="font-bold text-xs text-indigo-900">Siswa (2-A)</span>
+                </div>
+
+                <!-- Live Score -->
+                <div class="flex items-center gap-2 bg-amber-100 px-4 py-2 rounded-2xl border-2 border-amber-300">
+                    <i class="fa-solid fa-star text-amber-500 text-lg"></i>
+                    <span class="font-game text-amber-800 text-lg" id="hud-score">0</span>
+                </div>
+            </div>
+
+            <!-- Progress Bar Level -->
+            <div class="w-full bg-slate-200 h-4 rounded-full overflow-hidden mb-6 p-1 border border-slate-300">
+                <div id="level-progress-bar" class="bg-gradient-to-r from-cyan-400 to-indigo-600 h-full rounded-full transition-all duration-500" style="width: 20%"></div>
+            </div>
+
+            <!-- Quiz Main Box -->
+            <div id="quiz-container" class="space-y-6">
+                <!-- Badge Tipe Soal -->
+                <div class="flex items-center justify-between">
+                    <span id="question-type-badge" class="px-4 py-1.5 bg-indigo-100 text-indigo-700 rounded-full text-xs font-black tracking-wider uppercase border border-indigo-300">
+                        Pilihan Ganda
+                    </span>
+                    <span class="text-xs font-bold text-slate-400" id="question-count-text">Pertanyaan 1/1</span>
+                </div>
+
+                <!-- Pertanyaan / Problem Scenario -->
+                <div class="bg-indigo-50/80 p-5 md:p-6 rounded-2xl border-2 border-indigo-100">
+                    <h2 id="question-text" class="text-lg md:text-xl font-bold text-indigo-950 leading-relaxed">
+                        Pertanyaan HOTS akan tampil di sini...
+                    </h2>
+                </div>
+
+                <!-- Area Jawaban (Dynamic Rendering berdasarkan tipe soal) -->
+                <div id="answers-container" class="space-y-3">
+                    <!-- Dynamic Answer Input / Options -->
+                </div>
+
+                <!-- Action Button / Submit -->
+                <div class="pt-4 flex justify-end">
+                    <button id="btn-submit-answer" onclick="checkAnswer()" class="clay-btn-cyan px-8 py-3.5 text-lg font-game flex items-center gap-2">
+                        Kirim Jawaban <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Feedback Modal Overlay (Popup Hasil Jawaban) -->
+            <div id="feedback-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+                <div class="clay-card p-6 md:p-8 max-w-md w-full text-center space-y-4 animate-bounce-in">
+                    <div id="feedback-icon" class="text-6xl">
+                        🎉
+                    </div>
+                    <h3 id="feedback-title" class="text-2xl font-game text-indigo-900">Luar Biasa!</h3>
+                    <p id="feedback-message" class="text-slate-600 font-semibold text-sm md:text-base">
+                        Penjelasan logika HOTS akan muncul di sini untuk membantu pemahaman siswa.
+                    </p>
+                    <button id="btn-next-question" onclick="nextQuestion()" class="clay-btn-pink w-full py-3 font-game text-lg">
+                        Lanjut Petualangan <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ================= HALAMAN 3: SERTIFIKAT PENGHARGAAN ================= -->
+        <div id="screen-certificate" class="hidden space-y-6">
+            
+            <!-- Sertifikat Printable Card -->
+            <div id="certificate-print-area" class="cert-border p-6 md:p-10 rounded-3xl shadow-2xl text-center relative overflow-hidden bg-white">
+                <!-- Background Futuristic Watermark -->
+                <div class="absolute inset-0 opacity-5 pointer-events-none flex items-center justify-center">
+                    <i class="fa-solid fa-award text-[300px] text-indigo-900"></i>
+                </div>
+
+                <!-- Header Sertifikat -->
+                <div class="flex justify-between items-center mb-6">
+                    <div class="text-left">
+                        <span class="text-xs font-black text-indigo-500 uppercase tracking-widest">AKADEMI MATEMATIKA FUTURISTIK</span>
+                        <h4 class="font-game text-indigo-900 text-sm">E-CERTIFICATE OF ACHIEVEMENT</h4>
+                    </div>
+                    <div class="text-3xl text-amber-400">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                </div>
+
+                <div class="my-4">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Sertifikat ini secara resmi diberikan kepada:</p>
+                    <h2 id="cert-student-name" class="text-2xl md:text-4xl font-game text-indigo-900 my-2 underline decoration-cyan-400 decoration-4">
+                        Nama Siswa
+                    </h2>
+                    <p id="cert-student-class" class="text-sm font-bold text-slate-600">Kelas: 2-A</p>
+                </div>
+
+                <p class="text-slate-600 font-semibold text-sm max-w-lg mx-auto my-4 leading-relaxed">
+                    Telah sukses menyelesaikan seluruh 5 Level Misi Berpikir Tingkat Tinggi (HOTS) Matematika Sekolah Dasar dengan hasil pencapaian:
+                </p>
+
+                <!-- Badge Predikat & Skor -->
+                <div class="my-6 inline-block bg-indigo-50 p-4 rounded-2xl border-2 border-indigo-200 shadow-inner">
+                    <div class="text-xs font-bold text-indigo-500 uppercase">Predikat Kelulusan</div>
+                    <div id="cert-grade" class="text-3xl md:text-4xl font-game text-pink-600 my-1">AMAT BAIK</div>
+                    <div class="text-xs font-bold text-slate-500">Skor Akhir: <span id="cert-score" class="text-indigo-900 font-extrabold text-base">100</span> / 90</div>
+                </div>
+
+                <!-- Tanda Tangan & Tanggal -->
+                <div class="flex justify-between items-end mt-8 pt-6 border-t-2 border-slate-100 text-xs text-slate-500 font-bold">
+                    <div class="text-left">
+                        <p>Diterbitkan Oleh:</p>
+                        <p class="font-game text-indigo-800 text-sm mt-1">Math-Bot 3000 AI System</p>
+                    </div>
+                    <div class="text-right">
+                        <p id="cert-date">Tanggal: 28 Oktober 2026</p>
+                        <p class="text-emerald-600 font-bold mt-1"><i class="fa-solid fa-circle-check"></i> Terverifikasi Digital</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Aksi Sertifikat -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="window.print()" class="clay-btn-cyan px-6 py-3 font-game flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> Cetak Sertifikat
+                </button>
+                <button onclick="restartGame()" class="clay-btn-amber px-6 py-3 font-game flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Custom Modal Dialog (Pengganti Alert) -->
+    <div id="custom-alert-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div class="clay-card p-6 max-w-sm w-full text-center space-y-4 custom-alert">
+            <div class="text-4xl text-amber-500">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h4 id="alert-title" class="text-xl font-game text-indigo-900">Perhatian</h4>
+            <p id="alert-message" class="text-slate-600 font-semibold text-sm">
+                Pesan akan ditampilkan di sini.
+            </p>
+            <button onclick="closeCustomAlert()" class="clay-btn-cyan w-full py-2.5 font-game">
+                Pengertian <i class="fa-solid fa-check ml-1"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Script Logika Game Javascript -->
+    <script>
+        /* ================= DATA SOAL GAME MATEMATIKA HOTS KELAS 2 SD ================= */
+        const gameLevels = [
+            {
+                level: 1,
+                title: "Detektif Pola & Bilangan",
+                questions: [
+                    {
+                        type: "single",
+                        typeTitle: "Pilihan Ganda (Penalaran Pola)",
+                        question: "Kiki Robot menyusun nomor rumah di lorong ruang angkasa: 210, 215, 220, ..., 230. Angka berapa yang hilang di rumah bertanda titik-titik?",
+                        options: ["221", "225", "228", "235"],
+                        correct: 1,
+                        explanation: "Pola angka meloncat 5 (210 + 5 = 215, 215 + 5 = 220, maka 220 + 5 = 225)."
+                    },
+                    {
+                        type: "tf",
+                        typeTitle: "Benar atau Salah",
+                        question: "Angka 348 memiliki nilai tempat 3 Ratusan, 4 Puluhan, dan 8 Satuan.",
+                        options: ["Benar", "Salah"],
+                        correct: 0,
+                        explanation: "Tepat sekali! 348 = 300 + 40 + 8."
+                    }
+                ]
+            },
+            {
+                level: 2,
+                title: "Misi Penjumlahan & Pengurangan Story",
+                questions: [
+                    {
+                        type: "multiple",
+                        typeTitle: "Pilihan Majemuk (Pilih 2 Jawaban)",
+                        question: "Dino memiliki 45 kristal energi. Ia mendapat tambahan 25 kristal dari stasiun ruang angkasa. Manakah dua pernyataan di bawah ini yang BENAR?",
+                        options: [
+                            "Total kristal Dino sekarang adalah 70",
+                            "Total kristal Dino kurang dari 60",
+                            "Jika Dino menggunakan 10 kristal, sisanya 60",
+                            "Dino memiliki total 80 kristal"
+                        ],
+                        correct: [0, 2],
+                        explanation: "45 + 25 = 70 kristal. Jika dipakai 10, maka 70 - 10 = 60 kristal!"
+                    },
+                    {
+                        type: "match",
+                        typeTitle: "Melengkapi Kalimat Matematika",
+                        question: "Lengkapi titik-titik berikut agar bernilai benar: '150 + ... = 220'",
+                        options: ["50", "60", "70", "80"],
+                        correct: 2,
+                        explanation: "Untuk mencari isian titik-titik: 220 - 150 = 70."
+                    }
+                ]
+            },
+            {
+                level: 3,
+                title: "Perkalian Konseptual (Penjumlahan Berulang)",
+                questions: [
+                    {
+                        type: "single",
+                        typeTitle: "Pilihan Ganda Konseptual",
+                        question: "Ada 4 kotak roket. Setiap kotak berisi 5 tabung bahan bakar. Bentuk perkalian dan hasil penjumlahan yang tepat adalah...",
+                        options: [
+                            "4 x 5 = 5 + 5 + 5 + 5 = 20",
+                            "5 x 4 = 4 + 4 + 4 + 4 = 20",
+                            "4 + 5 = 9",
+                            "4 x 5 = 4 + 4 + 4 + 4 = 16"
+                        ],
+                        correct: 0,
+                        explanation: "4 kotak berisi 5 artinya 4 kali penjumlahan angka 5 (5 + 5 + 5 + 5 = 20)."
+                    },
+                    {
+                        type: "tf",
+                        typeTitle: "Benar atau Salah",
+                        question: "Pernyataan: '3 x 6 menghasilkan nilai yang sama dengan 6 x 3'.",
+                        options: ["Benar", "Salah"],
+                        correct: 0,
+                        explanation: "Benar! Sifat pertukaran perkalian: 3 x 6 = 18 dan 6 x 3 = 18."
+                    }
+                ]
+            },
+            {
+                level: 4,
+                title: "Geometri & Bangun Datar Futuristik",
+                questions: [
+                    {
+                        type: "multiple",
+                        typeTitle: "Pilihan Majemuk (Pilih 2 Jawaban)",
+                        question: "Manakah bangun datar di bawah ini yang memiliki 4 sisi sama panjang dan 4 sudut siku-siku?",
+                        options: [
+                            "Persegi",
+                            "Segitiga Sama Sisi",
+                            "Bujur Sangkar (Square)",
+                            "Lingkaran"
+                        ],
+                        correct: [0, 2],
+                        explanation: "Persegi (atau bujur sangkar) memiliki 4 sisi sama panjang dan 4 sudut siku-siku."
+                    },
+                    {
+                        type: "single",
+                        typeTitle: "Pilihan Ganda Analisis",
+                        question: "Sebuah roda roket berbentuk lingkaran. Berapa jumlah titik sudut yang dimiliki oleh lingkaran?",
+                        options: ["0 (Tidak memiliki sudut)", "3 sudut", "4 sudut", "1 sudut"],
+                        correct: 0,
+                        explanation: "Lingkaran terbentuk dari garis lengkung tertutup sehingga tidak memiliki titik sudut (0)."
+                    }
+                ]
+            },
+            {
+                level: 5,
+                title: "Tantangan HOTS Pemecahan Masalah",
+                questions: [
+                    {
+                        type: "single",
+                        typeTitle: "Soal Cerita Penalaran Tinggi",
+                        question: "Ibu Robot membagikan 24 biskuit bintang secara merata kepada 4 anaknya. Kemudian, anak pertama memberikan 2 biskuitnya kepada adiknya. Berapa biskuit anak pertama sekarang?",
+                        options: ["4 biskuit", "6 biskuit", "8 biskuit", "2 biskuit"],
+                        correct: 0,
+                        explanation: "Mula-mula: 24 : 4 = 6 biskuit per anak. Anak pertama memberikan 2 biskuit, jadi sisanya: 6 - 2 = 4 biskuit."
+                    }
+                ]
+            }
+        ];
+
+        /* ================= STATE GAME ================= */
+        let playerData = {
+            name: "",
+            class: "",
+            score: 0
+        };
+
+        let currentLevelIdx = 0;
+        let currentQuestionIdx = 0;
+        let selectedAnswers = [];
+
+        // Web Audio Synthesizer
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.05);
+                }
+            } catch (e) {
+                console.log("Audio play blocked");
+            }
+        }
+
+        function showCustomAlert(title, message) {
+            document.getElementById('alert-title').innerText = title;
+            document.getElementById('alert-message').innerText = message;
+            document.getElementById('custom-alert-modal').classList.remove('hidden');
+        }
+
+        function closeCustomAlert() {
+            playSound('click');
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+        }
+
+        /* ================= NAVIGASI GAME ================= */
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            const classInput = document.getElementById('player-class').value;
+
+            if (!nameInput) {
+                showCustomAlert("Identitas Belum Lengkap", "Halo Kapten Cilik! Ketik namamu terlebih dahulu sebelum memulai misi ya! 😊");
+                return;
+            }
+
+            playSound('click');
+            playerData.name = nameInput;
+            playerData.class = classInput;
+            playerData.score = 0;
+
+            document.getElementById('hud-player-info').innerText = `${playerData.name} (${playerData.class})`;
+            
+            document.getElementById('screen-welcome').classList.add('hidden');
+            document.getElementById('screen-game').classList.remove('hidden');
+
+            currentLevelIdx = 0;
+            currentQuestionIdx = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedAnswers = [];
+            const levelData = gameLevels[currentLevelIdx];
+            const qData = levelData.questions[currentQuestionIdx];
+
+            document.getElementById('display-level-num').innerText = levelData.level;
+            document.getElementById('display-level-title').innerText = levelData.title;
+            document.getElementById('hud-score').innerText = playerData.score;
+            document.getElementById('question-type-badge').innerText = qData.typeTitle;
+            document.getElementById('question-count-text').innerText = `Soal ${currentQuestionIdx + 1} dari ${levelData.questions.length}`;
+
+            const totalLevels = gameLevels.length;
+            const progressPercent = ((currentLevelIdx) / totalLevels) * 100 + 10;
+            document.getElementById('level-progress-bar').style.width = `${progressPercent}%`;
+
+            document.getElementById('question-text').innerText = qData.question;
+
+            const container = document.getElementById('answers-container');
+            container.innerHTML = "";
+
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "clay-option w-full p-4 text-left font-bold text-slate-800 flex items-center justify-between";
+                btn.onclick = () => selectOption(idx, qData.type, btn);
+
+                let labelPrefix = "";
+                if (qData.type === 'single' || qData.type === 'match') {
+                    labelPrefix = `<span class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center mr-3 font-game flex-shrink-0">${String.fromCharCode(65 + idx)}</span>`;
+                } else if (qData.type === 'tf') {
+                    labelPrefix = `<span class="w-8 h-8 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center mr-3 font-game flex-shrink-0"><i class="fa-solid fa-check"></i></span>`;
+                } else if (qData.type === 'multiple') {
+                    labelPrefix = `<span class="w-8 h-8 rounded-xl border-2 border-slate-400 flex items-center justify-center mr-3 check-box flex-shrink-0"><i class="fa-solid fa-check opacity-0"></i></span>`;
+                }
+
+                btn.innerHTML = `<div class="flex items-center">${labelPrefix} <span>${opt}</span></div>`;
+                container.appendChild(btn);
+            });
+        }
+
+        function selectOption(index, type, element) {
+            playSound('click');
+
+            if (type === 'single' || type === 'tf' || type === 'match') {
+                selectedAnswers = [index];
+                const allOpts = document.querySelectorAll('.clay-option');
+                allOpts.forEach(opt => opt.classList.remove('selected'));
+                element.classList.add('selected');
+            } else if (type === 'multiple') {
+                const pos = selectedAnswers.indexOf(index);
+                const checkBoxIcon = element.querySelector('.check-box i');
+                
+                if (pos > -1) {
+                    selectedAnswers.splice(pos, 1);
+                    element.classList.remove('selected');
+                    if(checkBoxIcon) checkBoxIcon.classList.add('opacity-0');
+                } else {
+                    selectedAnswers.push(index);
+                    element.classList.add('selected');
+                    if(checkBoxIcon) checkBoxIcon.classList.remove('opacity-0');
+                }
+            }
+        }
+
+        function checkAnswer() {
+            if (selectedAnswers.length === 0) {
+                showCustomAlert("Pilih Jawaban", "Silakan pilih salah satu atau beberapa jawaban terlebih dahulu ya! 😊");
+                return;
+            }
+
+            const qData = gameLevels[currentLevelIdx].questions[currentQuestionIdx];
+            let isCorrect = false;
+
+            if (qData.type === 'single' || qData.type === 'tf' || qData.type === 'match') {
+                isCorrect = selectedAnswers[0] === qData.correct;
+            } else if (qData.type === 'multiple') {
+                const sortedSelected = [...selectedAnswers].sort();
+                const sortedCorrect = [...qData.correct].sort();
+                isCorrect = JSON.stringify(sortedSelected) === JSON.stringify(sortedCorrect);
+            }
+
+            const modal = document.getElementById('feedback-modal');
+            const icon = document.getElementById('feedback-icon');
+            const title = document.getElementById('feedback-title');
+            const msg = document.getElementById('feedback-message');
+
+            if (isCorrect) {
+                playSound('correct');
+                playerData.score += 10;
+                document.getElementById('hud-score').innerText = playerData.score;
+                icon.innerHTML = "🎉";
+                title.innerText = "HEBAT! JAWABAN BENAR!";
+                title.className = "text-2xl font-game text-emerald-600";
+                
+                confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            } else {
+                playSound('wrong');
+                icon.innerHTML = "💡";
+                title.innerText = "HAMPIR TEPAT!";
+                title.className = "text-2xl font-game text-amber-600";
+            }
+
+            msg.innerHTML = `<strong>Penjelasan HOTS:</strong><br>${qData.explanation}`;
+            modal.classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            playSound('click');
+            document.getElementById('feedback-modal').classList.add('hidden');
+
+            const levelData = gameLevels[currentLevelIdx];
+            if (currentQuestionIdx < levelData.questions.length - 1) {
+                currentQuestionIdx++;
+                loadQuestion();
+            } else {
+                if (currentLevelIdx < gameLevels.length - 1) {
+                    currentLevelIdx++;
+                    currentQuestionIdx = 0;
+                    showCustomAlert("Level Selesai! 🎉", `Selamat! Kamu berhasil menyelesaikan Level ${currentLevelIdx}! Lanjut ke Level ${currentLevelIdx + 1}!`);
+                    loadQuestion();
+                } else {
+                    finishGame();
+                }
+            }
+        }
+
+        function finishGame() {
+            document.getElementById('screen-game').classList.add('hidden');
+            document.getElementById('screen-certificate').classList.remove('hidden');
+
+            document.getElementById('cert-student-name').innerText = playerData.name;
+            document.getElementById('cert-student-class').innerText = `Kelas: ${playerData.class}`;
+            document.getElementById('cert-score').innerText = playerData.score;
+
+            const certGrade = document.getElementById('cert-grade');
+            let gradeText = "";
+            let gradeColor = "";
+
+            if (playerData.score >= 80) {
+                gradeText = "AMAT BAIK ⭐⭐⭐";
+                gradeColor = "text-emerald-600";
+            } else if (playerData.score >= 50) {
+                gradeText = "BAIK ⭐⭐";
+                gradeColor = "text-cyan-600";
+            } else {
+                gradeText = "CUKUP ⭐";
+                gradeColor = "text-amber-600";
+            }
+
+            certGrade.innerText = gradeText;
+            certGrade.className = `text-3xl md:text-4xl font-game my-1 ${gradeColor}`;
+
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('cert-date').innerText = `Tanggal: ${now.toLocaleDateString('id-ID', options)}`;
+
+            confetti({ particleCount: 150, spread: 100, origin: { y: 0.4 } });
+        }
+
+        function restartGame() {
+            playSound('click');
+            document.getElementById('screen-certificate').classList.add('hidden');
+            document.getElementById('screen-welcome').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
